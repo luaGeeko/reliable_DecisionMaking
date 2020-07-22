@@ -16,7 +16,7 @@ def label_test_and_training_data(all_data, test_percentage=20):
     """
     for session_id in range(len(all_data)):
         trials_in_session = all_data[session_id]['spks']  # [# of neurons x trials x time (2.5 sec)]
-        number_of_trials = trials_in_session.shape[-1]  # number of trials in session
+        number_of_trials = trials_in_session.shape[1]  # number of trials in session
         print(number_of_trials)  # sanity check
         # generate random series of 0s and 1s, make sure to set seed
         # add binary array to the data

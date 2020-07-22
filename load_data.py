@@ -5,7 +5,7 @@ import numpy as np
 def make_list_of_filenames():
     file_names = []
     for j in range(3):
-        file_names.append('steinmetz_part%d.npz' % j)
+        file_names.append('steinmetz_part%d.npz' % (j + 1))
     return file_names
 
 
@@ -46,8 +46,8 @@ def load_mouse_data():
 
     file_names = make_list_of_filenames()  # get list of file names
     all_data = np.array([])
-    for j in range(len(file_names)):
-        all_data = np.hstack((all_data, np.load('steinmetz_part%d.npz' % j, allow_pickle=True)['dat']))
+    for file_name in file_names:
+        all_data = np.hstack((all_data, np.load(file_name, allow_pickle=True)['dat']))
     return all_data
 
 
