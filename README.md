@@ -21,7 +21,7 @@ To help with laoding of dataset and initial analysis overview this colab noteboo
 4. To pull new changes ```git pull```. Before pushing new code make sure your repository is in sync
 5. Once changes done to the code to push it to the repository ```git push```
 6. Make sure you keep your branches in sync with the master branch, follow these steps:
-first move to master branch ``` git checkout master ``` 
-pull the updates   ```git pull```
-now move back to your branch ```git checkout your-branch-name```
-merge with master ```git merge master```
+     1. first move to master branch ``` git checkout master ``` 
+     2. pull the updates   ```git pull```
+     3. now move back to your branch ```git checkout your-branch-name```
+     4. merge with master ```git merge master``` 
