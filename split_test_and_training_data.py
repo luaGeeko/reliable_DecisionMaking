@@ -116,6 +116,20 @@ def get_training_data(all_data_in):
     return all_data
 
 
+def get_test_and_training_data(all_data):
+    """
+    Return test and training data sets.
+    Args:
+        all_data (class, numpy array of dictionaries) : all simulated or mouse data
+
+    Returns:
+        training and test data in the same format as the input data
+    """
+    test_data = get_test_data(all_data)
+    training_data = get_training_data(all_data)
+    return test_data, training_data
+
+
 # this is just here for testing
 def main():
     all_data = load_data.load_mouse_data()
