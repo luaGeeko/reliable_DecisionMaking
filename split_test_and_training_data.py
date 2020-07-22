@@ -51,6 +51,7 @@ def get_test_data(all_data):
         all_data[session_id]['feedback_time'] = all_data[session_id]['feedback_time'][indices_of_test_trials]
         all_data[session_id]['feedback_type'] = all_data[session_id]['feedback_type'][indices_of_test_trials]
         all_data[session_id]['response'] = all_data[session_id]['response'][indices_of_test_trials]
+        all_data[session_id]['test_data'] = all_data[session_id]['test_data'][indices_of_test_trials]
 
     return all_data
 
@@ -59,7 +60,7 @@ def get_training_data(all_data):
     # filter data set and return trials that are in the training data
     for session_id in range(len(all_data)):
         trial_types = all_data[session_id]['test_data']
-        indices_of_training_trials = np.where(trial_types == 0)[0]
+        indices_of_training_trials = list(np.where(trial_types == 0)[0])
         all_data[session_id]['spks'] = all_data[session_id]['spks'][:, indices_of_training_trials, :]
         all_data[session_id]['wheel'] = all_data[session_id]['wheel'][:, indices_of_training_trials, :]
         all_data[session_id]['pupil'] = all_data[session_id]['pupil'][:, indices_of_training_trials, :]
@@ -71,19 +72,19 @@ def get_training_data(all_data):
         all_data[session_id]['feedback_time'] = all_data[session_id]['feedback_time'][indices_of_training_trials]
         all_data[session_id]['feedback_type'] = all_data[session_id]['feedback_type'][indices_of_training_trials]
         all_data[session_id]['response'] = all_data[session_id]['response'][indices_of_training_trials]
+        all_data[session_id]['test_data'] = all_data[session_id]['test_data'][indices_of_training_trials]
     return all_data
 
 
 def main():
     all_data = load_data.load_mouse_data()
     all_data_labelled = label_test_and_training_data(all_data)
-    test_data = get_test_data(all_data_labelled)
-    training_data = get_training_data(all_data_labelled)
+    test_data = np.array(all_data_labelled, copy=True)
+    training_data = np.array(all_data_labelled, copy=True)
+    test_data = get_test_data(test_data)
+    training_data = get_training_data(training_data)
 
     print('neuron')
-
-
-
 
 
 if __name__ == '__main__':
