@@ -1,13 +1,22 @@
 import numpy as np
+import logging 
+import os
 
+dirname = os.path.dirname(__file__)
+# debugging
+logger = logging.getLogger(__name__)
 
 # the data is stored in three files. this is a list of all the file names
-def make_list_of_filenames():
+def make_list_of_filenames(path_to_dataset: str) -> list:
     file_names = []
+<<<<<<< HEAD
+    for j in range(1, 4):
+        file_names.append(os.path.join(path_to_dataset, 'steinmetz_part%d.npz' % j))
+=======
     for j in range(3):
         file_names.append('steinmetz_part%d.npz' % (j + 1))
+>>>>>>> c203fc8414fd5ba6790141c3b374bbafe91a77f5
     return file_names
-
 
 def load_mouse_data():
     """
@@ -43,9 +52,17 @@ def load_mouse_data():
     dat['%X%_passive']: same as above for X = {spks, lfp, pupil, wheel, contrast_left, contrast_right} but for passive
     trials at the end of the recording when the mouse was no longer engaged and stopped making responses.
     """
-
-    file_names = make_list_of_filenames()  # get list of file names
+    dataset_folder_path = os.path.join(dirname, "dataset")
+    # list of the dataset files in the dataset folder 
+    files = os.listdir(dataset_folder_path)
+    # get absolute path of dataset files 
+    file_paths = [os.path.join(dataset_folder_path, i) for i in files]
     all_data = np.array([])
+<<<<<<< HEAD
+    for file_id in file_paths:
+        all_data = np.hstack((all_data, np.load(file_id, allow_pickle=True)['dat']))
+    return all_data
+=======
     for file_name in file_names:
         all_data = np.hstack((all_data, np.load(file_name, allow_pickle=True)['dat']))
     return all_data
@@ -53,3 +70,4 @@ def load_mouse_data():
 
 if __name__ == '__main__':
     mouse_data = load_mouse_data()
+>>>>>>> c203fc8414fd5ba6790141c3b374bbafe91a77f5
