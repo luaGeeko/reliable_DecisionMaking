@@ -28,4 +28,20 @@ def test_get_test_and_training_data():
     assert num_of_trials_all_example == (num_of_trials_test_example + num_of_trials_training_example)
 
 
+def test_get_training_data():
+    # check if it splits the same way every time
+    all_data = load_data.load_mouse_data()
+    training_data_1 = split_test_and_training_data.get_training_data(all_data)
+    training_data_2 = split_test_and_training_data.get_training_data(all_data)
+
+    assert np.allclose(training_data_1[2]['contrast_right'], training_data_2[2]['contrast_right'], rtol=1e-05, atol=1e-08, equal_nan=False)
+
+
+def test_get_test_data():
+    # check if it splits the same way every time
+    all_data = load_data.load_mouse_data()
+    test_data_1 = split_test_and_training_data.get_test_data(all_data)
+    test_data_2 = split_test_and_training_data.get_test_data(all_data)
+
+    assert np.allclose(test_data_1[2]['contrast_left'], test_data_2[2]['contrast_left'], rtol=1e-05, atol=1e-08, equal_nan=False)
 
