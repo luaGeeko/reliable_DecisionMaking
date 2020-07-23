@@ -20,16 +20,16 @@ def get_dummy_data_for_neuron_type(trial_features, number_of_neurons, neuron_typ
     if neuron_type == 'random':
         # means = np.round(np.random.rand(trial_features.shape[1]) * number_of_time_bins, 0)  # random means
         sd = np.random.rand(trial_features.shape[1]) * 2  # random sd
-        # firings = add sd to firings in the correct shape
+        # todo firings = add sd to firings (array of 0s) in the correct shape
 
     if neuron_type == 'right_choice':
-        pass  # have a peak before the response if there is a right choice otherwise do not respond
+        pass  # todo have a peak before the response if there is a right choice otherwise do not respond
     if neuron_type == 'left_choice':
-        pass  # have a peak before the response if there is a left choice otherwise do not respond
+        pass  # todo have a peak before the response if there is a left choice otherwise do not respond
     if neuron_type == 'peak_at_response':
-        pass  # respond regardless of decision
+        pass  # todo respond regardless of decision
     if neuron_type == 'ramp_to_action':
-        pass  # increase / decrease activity until action regardless of decision
+        pass  # todo increase / decrease activity until action regardless of decision
 
     return firings
 
@@ -63,7 +63,7 @@ def make_dummy_data_for_session(simulated_data, number_of_neurons, number_of_tri
         else:
             number_of_neurons_to_generate = int(number_of_neurons * type_probabilities[index])
         simulated_firing_neuron = get_dummy_data_for_neuron_type(trial_feature_matrix, number_of_neurons_to_generate, neuron_type, number_of_time_bins)
-        # update simulated_firing with this
+        # todo update approriate part of simulated_firing with simulated_firing_neuron
 
     return simulated_firing
 
