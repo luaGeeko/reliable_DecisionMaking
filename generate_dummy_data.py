@@ -26,7 +26,24 @@ def make_random_neuron(trial_features, number_of_time_bins):
 
 
 def make_right_choice_neuron(trial_features, number_of_time_bins):
-    pass
+    number_of_trials = trial_features.shape[1]
+    earliest_response = trial_features[-1].min() * 100
+    # setting a reasonable range for peak
+    forward_time_shift_relative_to_response = np.random.uniform(2, earliest_response - 5)
+    sigma = np.random.uniform(0, number_of_time_bins / 4)
+    if trial_features[0][0] == 1:
+        mu = trial_features[-1][0] * 100 - forward_time_shift_relative_to_response
+        firings_on_trial = math_utility.my_gaussian(np.arange(number_of_time_bins), mu, sigma)
+    else:
+        firings_on_trial = np.zeros(number_of_time_bins)
+    for trial in range(number_of_trials - 1):
+        if trial_features[0][trial + 1] == 1:
+            mu = trial_features[-1][trial + 1] * 100 - forward_time_shift_relative_to_response
+            next_firings = math_utility.my_gaussian(np.arange(number_of_time_bins), mu, sigma)
+        else:
+            next_firings = np.zeros(number_of_time_bins)
+        firings_on_trial = np.vstack((firings_on_trial, next_firings))
+    return firings_on_trial
 
 
 def get_dummy_data_for_neuron_type(trial_features, number_of_neurons, neuron_type, number_of_time_bins):
@@ -63,7 +80,7 @@ def get_trial_feature_matrix(simulated_data):
     trial_features[0] = right_mask
     trial_features[1] = left_mask
     trial_features[2] = no_go_mask
-    trial_features[3] = response_times[0]
+    trial_features[3] = response_times.flatten()
     return trial_features
 
 
