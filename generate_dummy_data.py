@@ -181,6 +181,7 @@ def generate_dummy_data():
         number_of_neurons = trials_in_session.shape[0]
         number_of_trials = trials_in_session.shape[1]
         number_of_time_bins = trials_in_session.shape[2]
+        print('Make dummy data for this session: session #' + str(session_id))
         simulated_firing = make_dummy_data_for_session(simulated_data[session_id], number_of_neurons, number_of_trials, number_of_time_bins)
         simulated_data[session_id]['spks'] = simulated_firing  # overwrite real data with simulated data
 
