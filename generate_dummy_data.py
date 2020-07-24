@@ -95,7 +95,7 @@ def make_ramp_neuron(trial_features, number_of_time_bins):
     slope = np.random.uniform(2, 6)
     firings_on_trial = linear * slope
 
-    for trial in range(number_of_trials):
+    for trial in range(number_of_trials - 1):
         next_ramp = linear * slope
         firings_on_trial = np.vstack((firings_on_trial, next_ramp))
     return firings_on_trial
