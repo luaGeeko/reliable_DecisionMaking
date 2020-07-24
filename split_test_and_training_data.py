@@ -35,6 +35,8 @@ def label_test_and_training_data(all_data, test_percentage=20):
     Returns:
         class, the input data with an additional column
     """
+    print('Labelling data for splitting.')
+    print('WARNING: the passive trials will not be split by this.')
     np.random.seed(800)  # make sure that it always chooses the same trials as test trials
 
     for session_id in range(len(all_data)):
