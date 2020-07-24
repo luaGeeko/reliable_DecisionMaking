@@ -1,5 +1,6 @@
 import copy
 import load_data
+import math_utility
 import numpy as np
 import split_test_and_training_data
 
@@ -15,15 +16,30 @@ def get_training_data_for_simulation():
     return simulated_data
 
 
+def make_random_neuron(trial_features, number_of_time_bins):
+    number_of_trials = trial_features.shape[1]
+    firings_on_trial = math_utility.get_mixture_of_random_gaussians(15, np.arange(number_of_time_bins))
+    for trial in range(number_of_trials - 1):
+        firings_on_trial = np.vstack((firings_on_trial, math_utility.get_mixture_of_random_gaussians(15, np.arange(number_of_time_bins))))
+
+    return firings_on_trial
+
+
+def make_right_choice_neuron(trial_features, number_of_time_bins):
+    pass
+
+
 def get_dummy_data_for_neuron_type(trial_features, number_of_neurons, neuron_type, number_of_time_bins):
     firings = np.zeros((number_of_neurons, trial_features.shape[1], number_of_time_bins))
     if neuron_type == 'random':
-        # means = np.round(np.random.rand(trial_features.shape[1]) * number_of_time_bins, 0)  # random means
-        sd = np.random.rand(trial_features.shape[1]) * 2  # random sd
-        # todo firings = add sd to firings (array of 0s) in the correct shape
+        for neuron in range(number_of_neurons):
+            random_neuron = make_random_neuron(trial_features, number_of_time_bins)
+            firings[neuron, :, :] = random_neuron
 
     if neuron_type == 'right_choice':
-        pass  # todo have a peak before the response if there is a right choice otherwise do not respond
+        for neuron in range(number_of_neurons):
+            right_choice_neuron = make_right_choice_neuron(trial_features, number_of_time_bins)
+            firings[neuron, :, :] = right_choice_neuron
     if neuron_type == 'left_choice':
         pass  # todo have a peak before the response if there is a left choice otherwise do not respond
     if neuron_type == 'peak_at_response':
@@ -62,8 +78,10 @@ def make_dummy_data_for_session(simulated_data, number_of_neurons, number_of_tri
             number_of_neurons_to_generate = number_of_neurons - len(neuron_types_added)
         else:
             number_of_neurons_to_generate = int(number_of_neurons * type_probabilities[index])
-        simulated_firing_neuron = get_dummy_data_for_neuron_type(trial_feature_matrix, number_of_neurons_to_generate, neuron_type, number_of_time_bins)
+        simulated_firing_neuron = get_dummy_data_for_neuron_type(trial_feature_matrix, number_of_neurons_to_generate,
+                                                                 neuron_type, number_of_time_bins)
         # todo update approriate part of simulated_firing with simulated_firing_neuron
+        # todo update neuron types added (so we can check if the glm is decoding these well)
 
     return simulated_firing
 
