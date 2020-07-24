@@ -31,18 +31,73 @@ def make_right_choice_neuron(trial_features, number_of_time_bins):
     # setting a reasonable range for peak
     forward_time_shift_relative_to_response = np.random.uniform(2, earliest_response - 5)
     sigma = np.random.uniform(0, number_of_time_bins / 4)
-    if trial_features[0][0] == 1:
+    if trial_features[0][0] == 1:  # behaviour was a right choice
         mu = trial_features[-1][0] * 100 - forward_time_shift_relative_to_response
         firings_on_trial = math_utility.my_gaussian(np.arange(number_of_time_bins), mu, sigma)
     else:
         firings_on_trial = np.zeros(number_of_time_bins)
     for trial in range(number_of_trials - 1):
-        if trial_features[0][trial + 1] == 1:
+        if trial_features[0][trial + 1] == 1:  # behaviour was a right choice
             mu = trial_features[-1][trial + 1] * 100 - forward_time_shift_relative_to_response
             next_firings = math_utility.my_gaussian(np.arange(number_of_time_bins), mu, sigma)
         else:
             next_firings = np.zeros(number_of_time_bins)
         firings_on_trial = np.vstack((firings_on_trial, next_firings))
+    return firings_on_trial
+
+
+def make_left_choice_neuron(trial_features, number_of_time_bins):
+    number_of_trials = trial_features.shape[1]
+    earliest_response = trial_features[-1].min() * 100
+    # setting a reasonable range for peak
+    forward_time_shift_relative_to_response = np.random.uniform(2, earliest_response - 5)
+    sigma = np.random.uniform(0, number_of_time_bins / 4)
+    if trial_features[1][0] == 1:  # behaviour was a left choice
+        mu = trial_features[-1][0] * 100 - forward_time_shift_relative_to_response
+        firings_on_trial = math_utility.my_gaussian(np.arange(number_of_time_bins), mu, sigma)
+    else:
+        firings_on_trial = np.zeros(number_of_time_bins)
+    for trial in range(number_of_trials - 1):
+        if trial_features[1][trial + 1] == 1: # behaviour was a left choice
+            mu = trial_features[-1][trial + 1] * 100 - forward_time_shift_relative_to_response
+            next_firings = math_utility.my_gaussian(np.arange(number_of_time_bins), mu, sigma)
+        else:
+            next_firings = np.zeros(number_of_time_bins)
+        firings_on_trial = np.vstack((firings_on_trial, next_firings))
+    return firings_on_trial
+
+
+# peak activity is relative to the response time but not behaviour
+def make_response_neuron(trial_features, number_of_time_bins):
+    number_of_trials = trial_features.shape[1]
+    earliest_response = trial_features[-1].min() * 100
+    # setting a reasonable range for peak
+    forward_time_shift_relative_to_response = np.random.uniform(2, earliest_response - 5)
+    sigma = np.random.uniform(0, number_of_time_bins / 4)
+    mu = trial_features[-1][0] * 100 - forward_time_shift_relative_to_response
+    firings_on_trial = math_utility.my_gaussian(np.arange(number_of_time_bins), mu, sigma)
+
+    for trial in range(number_of_trials - 1):
+        mu = trial_features[-1][trial + 1] * 100 - forward_time_shift_relative_to_response
+        next_firings = math_utility.my_gaussian(np.arange(number_of_time_bins), mu, sigma)
+        firings_on_trial = np.vstack((firings_on_trial, next_firings))
+    return firings_on_trial
+
+
+def make_ramp_neuron(trial_features, number_of_time_bins):
+    number_of_trials = trial_features.shape[1]
+    # stimulus onset is at bin # 50
+    mu = 51
+    sigma = np.random.uniform(5, 10)
+    # gauss = math_utility.my_gaussian(np.arange(number_of_time_bins), mu, sigma)
+    linear = np.hstack((np.zeros(50), np.arange(50, number_of_time_bins)))
+    linear /= np.sum(linear)
+    slope = np.random.uniform(2, 6)
+    firings_on_trial = linear * slope
+
+    for trial in range(number_of_trials):
+        next_ramp = linear * slope
+        firings_on_trial = np.vstack((firings_on_trial, next_ramp))
     return firings_on_trial
 
 
@@ -58,11 +113,17 @@ def get_dummy_data_for_neuron_type(trial_features, number_of_neurons, neuron_typ
             right_choice_neuron = make_right_choice_neuron(trial_features, number_of_time_bins)
             firings[neuron, :, :] = right_choice_neuron
     if neuron_type == 'left_choice':
-        pass  # todo have a peak before the response if there is a left choice otherwise do not respond
+        for neuron in range(number_of_neurons):
+            left_choice_neuron = make_left_choice_neuron(trial_features, number_of_time_bins)
+            firings[neuron, :, :] = left_choice_neuron
     if neuron_type == 'peak_at_response':
-        pass  # todo respond regardless of decision
+        for neuron in range(number_of_neurons):
+            response_neuron = make_response_neuron(trial_features, number_of_time_bins)
+            firings[neuron, :, :] = response_neuron
     if neuron_type == 'ramp_to_action':
-        pass  # todo increase / decrease activity until action regardless of decision
+        for neuron in range(number_of_neurons):
+            ramp_neuron = make_ramp_neuron(trial_features, number_of_time_bins)
+            firings[neuron, :, :] = ramp_neuron
 
     return firings
 
@@ -89,21 +150,30 @@ def make_dummy_data_for_session(simulated_data, number_of_neurons, number_of_tri
     neuron_types_added = []
     trial_feature_matrix = get_trial_feature_matrix(simulated_data)  # columns: left, right, no go, response_times
     types = ['right_choice', 'left_choice', 'peak_at_response', 'random', 'ramp_to_action']
+    print('Neuron types generated: ' + str(types))
     type_probabilities = [0.04, 0.06, 0.4, 0.3, 0.2]
+    print('With occurance probabilities: ' + str(type_probabilities))
+    neuron_counter = 0
+    already_added = 0
     for index, neuron_type in enumerate(types):
         if index == len(types):
             number_of_neurons_to_generate = number_of_neurons - len(neuron_types_added)
+
         else:
             number_of_neurons_to_generate = int(number_of_neurons * type_probabilities[index])
-        simulated_firing_neuron = get_dummy_data_for_neuron_type(trial_feature_matrix, number_of_neurons_to_generate,
+        neuron_counter += number_of_neurons_to_generate
+        simulated_firing_neurons = get_dummy_data_for_neuron_type(trial_feature_matrix, number_of_neurons_to_generate,
                                                                  neuron_type, number_of_time_bins)
-        # todo update approriate part of simulated_firing with simulated_firing_neuron
-        # todo update neuron types added (so we can check if the glm is decoding these well)
+        simulated_firing[already_added:neuron_counter, :, :] = simulated_firing_neurons
+        already_added += number_of_neurons_to_generate
+        neuron_types_added.extend([neuron_type] * number_of_neurons_to_generate)
+        print('maybe')
 
     return simulated_firing
 
 
 def generate_dummy_data():
+    print('Generating dummy data with multiple neuron types.')
     # load data (to get behavioural variables and shapes)
     simulated_data = get_training_data_for_simulation()  # I will update the real firing with simulated.
     # iterate over sessions
