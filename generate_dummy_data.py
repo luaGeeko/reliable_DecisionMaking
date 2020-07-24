@@ -167,7 +167,6 @@ def make_dummy_data_for_session(simulated_data, number_of_neurons, number_of_tri
         simulated_firing[already_added:neuron_counter, :, :] = simulated_firing_neurons
         already_added += number_of_neurons_to_generate
         neuron_types_added.extend([neuron_type] * number_of_neurons_to_generate)
-        print('maybe')
 
     return simulated_firing
 
