@@ -12,7 +12,7 @@ To help with laoding of dataset and initial analysis overview this colab noteboo
 1. First download the data from the google drive and place it under the folder ```dataset ```
 2. ```load_data.py``` module will load the data with 40 sessions from 10 mice
 3. ```split_test_and_training_data.py``` module will split the data into training and test sets.
-4. ```make_dummy_data.py``` module will simulate choice neurons and neurons that do not have activity that correlates with the choice. This will be used to test the GLM.
+4. ```generate_dummy_data.py``` module will simulate choice neurons and neurons that do not have activity that correlates with the choice. This will be used to test the GLM.
   
  
 #### Some Helpful Git commands
