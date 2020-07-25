@@ -29,10 +29,14 @@ def plot_population_average(dat, file_name='population_average'):
 
 def plot_random_examples(data, file_name='random_examples'):
     plt.figure()
-    random_indices = np.random.randint(0, data['spks'].shape[0], size=25)  # randomize neurons
+    random_indices = np.random.randint(0, data['spks'].shape[0], size=10)  # randomize neurons
     for cell in random_indices:
         random_trial = np.random.randint(0, data['spks'].shape[1])  # randomize a trial
         plt.plot(data['spks'][cell, random_trial, :])
+        plt.xlabel('Time (10 ms bins)')
+        plt.ylabel('Normalized firing rate')
+        plt.title('Random example neurons')
+
 
     plt.savefig(dirname + '/figures/' + file_name + '.png')
 
