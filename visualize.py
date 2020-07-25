@@ -27,9 +27,9 @@ def plot_population_average(dat, file_name='population_average'):
     plt.savefig(dirname + '/figures/' + file_name + '.png')
 
 
-def plot_random_examples(data, file_name='random_examples'):
+def plot_random_examples(data, file_name='random_examples', number_of_cells_to_plot=15):
     plt.figure()
-    random_indices = np.random.randint(0, data['spks'].shape[0], size=10)  # randomize neurons
+    random_indices = np.random.randint(0, data['spks'].shape[0], size=number_of_cells_to_plot)  # randomize neurons
     for cell in random_indices:
         random_trial = np.random.randint(0, data['spks'].shape[1])  # randomize a trial
         plt.plot(data['spks'][cell, random_trial, :])
