@@ -173,9 +173,10 @@ def make_dummy_data_for_session(simulated_data, number_of_neurons, number_of_tri
 
 
 def save_dummy_data(data, file_name):
-    if not os.path.isdir('/dummy_data/'):
-        os.mkdir('/dummy_data/')
-    np.savez('dummy_data' + file_name, data)
+    dirname = os.path.dirname(__file__)
+    if not os.path.isdir(dirname + '/dummy_data/'):
+        os.mkdir(dirname + '/dummy_data/')
+    np.savez(dirname + '/dummy_data/' + file_name, data)
 
 
 def generate_dummy_data():
