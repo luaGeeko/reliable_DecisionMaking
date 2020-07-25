@@ -176,7 +176,7 @@ def save_dummy_data(data, file_name):
     dirname = os.path.dirname(__file__)
     if not os.path.isdir(dirname + '/dummy_data/'):
         os.mkdir(dirname + '/dummy_data/')
-    np.savez(dirname + '/dummy_data/' + file_name, data)
+    np.save(dirname + '/dummy_data/' + file_name, [data])
 
 
 def generate_dummy_data():
@@ -192,7 +192,7 @@ def generate_dummy_data():
         print('Make dummy data for this session: session #' + str(session_id))
         simulated_firing = make_dummy_data_for_session(simulated_data[session_id], number_of_neurons, number_of_trials, number_of_time_bins)
         simulated_data[session_id]['spks'] = simulated_firing  # overwrite real data with simulated data
-        save_dummy_data(simulated_firing, str(session_id))
+        save_dummy_data(simulated_data[session_id], str(session_id))
     return simulated_data
 
 

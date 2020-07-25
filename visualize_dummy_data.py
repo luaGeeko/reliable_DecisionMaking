@@ -13,9 +13,10 @@ def visualize_dummy_data():
     file_paths = [os.path.join(dataset_folder_path, i) for i in files]
     all_data = np.array([])
     for file_id in file_paths:
-        all_data = np.hstack((all_data, np.load(file_id, allow_pickle=True)['dat']))
-    return all_data
-    visualize.plot_population_average(example_session, file_name='population_average_dummy4')
+        all_data = np.hstack((all_data, np.load(file_id, allow_pickle=True)))
+    visualize.plot_population_average(all_data[0], file_name='population_average_dummy0')
+    visualize.plot_random_examples(all_data[0], file_name='random_examples_dummy0')
+
 
 
 def main():

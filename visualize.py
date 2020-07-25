@@ -15,13 +15,24 @@ def plot_population_average(dat, file_name='population_average'):
     response = dat['response'] # right - nogo - left (-1, 0, 1)
     vis_right = dat['contrast_right'] # 0 - low - high
     vis_left = dat['contrast_left'] # 0 - low - high
-    plt.plot(dt * np.arange(NT), 1/dt * dat['spks'][:,response>=0].mean(axis=(0,1))) # left responses
-    plt.plot(dt * np.arange(NT), 1/dt * dat['spks'][:,response<0].mean(axis=(0,1))) # right responses
-    plt.plot(dt * np.arange(NT), 1/dt * dat['spks'][:,vis_right>0].mean(axis=(0,1))) # stimulus on the right
-    plt.plot(dt * np.arange(NT), 1/dt * dat['spks'][:,vis_right==0].mean(axis=(0,1))) # no stimulus on the right
+    plt.plot(dt * np.arange(NT), 1/dt * np.nanmean(dat['spks'][:, response >= 0], axis=(0, 1)))  # left responses
+    plt.plot(dt * np.arange(NT), 1/dt * np.nanmean(dat['spks'][:, response < 0], axis=(0, 1)))  # right responses
+    plt.plot(dt * np.arange(NT), 1/dt * np.nanmean(dat['spks'][:, vis_right > 0], axis=(0, 1)))  # stimulus on the right
+    plt.plot(dt * np.arange(NT), 1/dt * np.nanmean(dat['spks'][:, vis_right == 0], axis=(0, 1)))  # no stimulus on the right
 
     plt.legend(['left resp', 'right resp', 'right stim', 'no right stim'], fontsize=12)
     ax.set(xlabel  = 'time (sec)', ylabel = 'firing rate (Hz)')
     if not os.path.isdir(dirname + '/figures/'):
         os.mkdir(dirname + '/figures/')
     plt.savefig(dirname + '/figures/' + file_name + '.png')
+
+
+def plot_random_examples(data, file_name='random_examples'):
+    plt.figure()
+    random_indices = np.random.randint(0, data['spks'].shape[0], size=25)  # randomize neurons
+    for cell in random_indices:
+        random_trial = np.random.randint(0, data['spks'].shape[1])  # randomize a trial
+        plt.plot(data['spks'][cell, random_trial, :])
+
+    plt.savefig(dirname + '/figures/' + file_name + '.png')
+
