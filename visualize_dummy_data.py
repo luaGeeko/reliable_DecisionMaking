@@ -17,6 +17,7 @@ def visualize_dummy_data():
     visualize.plot_population_average(all_data[0], file_name='population_average_dummy0')
     visualize.plot_random_examples(all_data[0], file_name='random_examples_dummy0')
     visualize.plot_example_from_each_neuron_type(all_data[0], file_name='type_examples_dummy0')
+    visualize.plot_proportion_of_dummy_types(all_data[0], file_name='proportion_of_dummies0')
 
 
 def main():

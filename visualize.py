@@ -72,5 +72,18 @@ def plot_example_from_each_neuron_type(data, file_name='type_examples'):
         plt.close()
 
 
+def plot_proportion_of_dummy_types(data, file_name='proportion_of_dummies'):
+    types = data['dummy_type']
+    keys, counts = np.unique(types, return_counts=True)
+
+    plt.figure()
+    plt.bar(keys, counts)
+    plt.xticks(rotation=45)
+    plt.tight_layout()
+    plt.savefig(dirname + '/figures/' + file_name + '.png')
+    plt.close()
+
+
+
 
 

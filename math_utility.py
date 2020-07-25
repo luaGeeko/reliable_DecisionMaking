@@ -43,6 +43,10 @@ def get_mixture_of_random_gaussians(number_of_gaussians, x_points):
     return mixture
 
 
+def moving_average(x, window):
+    return np.convolve(x, np.ones(window), 'valid') / window
+
+
 def main():
     mix = get_mixture_of_random_gaussians(15, np.arange(250))
     plt.plot(mix)
