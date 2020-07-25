@@ -169,7 +169,7 @@ def make_dummy_data_for_session(simulated_data, number_of_neurons, number_of_tri
         already_added += number_of_neurons_to_generate
         neuron_types_added.extend([neuron_type] * number_of_neurons_to_generate)
 
-    return simulated_firing
+    return simulated_firing, neuron_types_added
 
 
 def save_dummy_data(data, file_name):
@@ -190,10 +190,11 @@ def generate_dummy_data():
         number_of_trials = trials_in_session.shape[1]
         number_of_time_bins = trials_in_session.shape[2]
         print('Make dummy data for this session: session #' + str(session_id))
-        simulated_firing = make_dummy_data_for_session(simulated_data[session_id], number_of_neurons, number_of_trials, number_of_time_bins)
+        simulated_firing, neuron_types_added = make_dummy_data_for_session(simulated_data[session_id], number_of_neurons, number_of_trials, number_of_time_bins)
         noise = np.random.normal(0, .01, simulated_firing.shape)
         simulated_firing += noise
         simulated_data[session_id]['spks'] = simulated_firing  # overwrite real data with simulated data
+        simulated_data[session_id]['dummy_type'] = neuron_types_added
         save_dummy_data(simulated_data[session_id], str(session_id))
     return simulated_data
 
