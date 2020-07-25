@@ -79,7 +79,7 @@ def plot_proportion_of_dummy_types(data, file_name='proportion_of_dummies'):
     plt.figure()
     plt.bar(keys, counts)
     plt.xticks(rotation=45)
-    plt.xlabel('Number of neurons')
+    plt.ylabel('Number of neurons')
     plt.tight_layout()
     plt.savefig(dirname + '/figures/' + file_name + '.png')
     plt.close()
