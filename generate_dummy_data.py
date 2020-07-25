@@ -2,6 +2,7 @@ import copy
 import load_data
 import math_utility
 import numpy as np
+import os
 import split_test_and_training_data
 
 
@@ -171,6 +172,12 @@ def make_dummy_data_for_session(simulated_data, number_of_neurons, number_of_tri
     return simulated_firing
 
 
+def save_dummy_data(data, file_name):
+    if not os.path.isdir('/dummy_data/'):
+        os.mkdir('/dummy_data/')
+    np.savez('dummy_data' + file_name, data)
+
+
 def generate_dummy_data():
     print('Generating dummy data with multiple neuron types.')
     # load data (to get behavioural variables and shapes)
@@ -184,10 +191,12 @@ def generate_dummy_data():
         print('Make dummy data for this session: session #' + str(session_id))
         simulated_firing = make_dummy_data_for_session(simulated_data[session_id], number_of_neurons, number_of_trials, number_of_time_bins)
         simulated_data[session_id]['spks'] = simulated_firing  # overwrite real data with simulated data
+        save_dummy_data(simulated_firing, str(session_id))
+    return simulated_data
 
 
 def main():
-    generate_dummy_data()
+    dummy_data = generate_dummy_data()
 
 
 if __name__ == '__main__':
