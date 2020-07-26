@@ -157,7 +157,7 @@ def make_dummy_data_for_session(simulated_data, number_of_neurons, number_of_tri
     neuron_counter = 0
     already_added = 0
     for index, neuron_type in enumerate(types):
-        if index == len(types):
+        if neuron_type == types[-1]:
             number_of_neurons_to_generate = number_of_neurons - len(neuron_types_added)
 
         else:
@@ -166,8 +166,8 @@ def make_dummy_data_for_session(simulated_data, number_of_neurons, number_of_tri
         simulated_firing_neurons = get_dummy_data_for_neuron_type(trial_feature_matrix, number_of_neurons_to_generate,
                                                                  neuron_type, number_of_time_bins)
         simulated_firing[already_added:neuron_counter, :, :] = simulated_firing_neurons
-        already_added += number_of_neurons_to_generate
-        neuron_types_added.extend([neuron_type] * number_of_neurons_to_generate)
+        already_added += simulated_firing_neurons.shape[0]
+        neuron_types_added.extend([neuron_type] * simulated_firing_neurons.shape[0])
 
     return simulated_firing, neuron_types_added
 
