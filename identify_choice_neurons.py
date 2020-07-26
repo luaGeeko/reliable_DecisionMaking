@@ -147,7 +147,9 @@ def compare_prediction_accuracies_for_neuron(dummy_session, neuron_index):
 
 def compare_predicted_to_ground_truth_type(ground_truth, predicted):
     correct_guesses = 0
-    number_of_times_it_guessed_choice = (predicted == 'choice').sum()
+    keys, counts = np.unique(predicted, return_counts=True)
+    choice_index = np.where(keys == 'choice')
+    number_of_times_it_guessed_choice = counts[choice_index]
     for index, neuron_type in enumerate(ground_truth):
         if neuron_type == predicted[index]:
             correct_guesses += 1
