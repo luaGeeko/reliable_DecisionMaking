@@ -1,17 +1,13 @@
 import numpy as np
-import logging 
+import coloredlogs, logging 
 import os
 
 dirname = os.path.dirname(__file__)
-# debugging
-logger = logging.getLogger(__name__)
 
-# the data is stored in three files. this is a list of all the file names
-def make_list_of_filenames(path_to_dataset: str) -> list:
-    file_names = []
-    for j in range(1, 4):
-        file_names.append(os.path.join(path_to_dataset, 'steinmetz_part%d.npz' % j))
-    return file_names
+# debugging
+logger = logging.getLogger("load_data")
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+coloredlogs.install(level='INFO', logger=logger)
 
 def load_mouse_data():
     """
@@ -55,4 +51,5 @@ def load_mouse_data():
     all_data = np.array([])
     for file_id in file_paths:
         all_data = np.hstack((all_data, np.load(file_id, allow_pickle=True)['dat']))
+    logging.info("Dataset loaded successfully - {} sessions".format(all_data.shape[0]))
     return all_data
