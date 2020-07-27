@@ -19,9 +19,10 @@ def get_training_data_for_simulation():
 
 def make_random_neuron(trial_features, number_of_time_bins):
     number_of_trials = trial_features.shape[1]
-    firings_on_trial = math_utility.get_mixture_of_random_gaussians(15, np.arange(number_of_time_bins))
+    # firings_on_trial = math_utility.get_mixture_of_random_gaussians(15, np.arange(number_of_time_bins))
+    firings_on_trial = np.random.normal(0, 1, number_of_time_bins) / 100
     for trial in range(number_of_trials - 1):
-        firings_on_trial = np.vstack((firings_on_trial, math_utility.get_mixture_of_random_gaussians(15, np.arange(number_of_time_bins))))
+        firings_on_trial = np.vstack((firings_on_trial, np.random.normal(0, 1, number_of_time_bins) / 100))
 
     return firings_on_trial
 
