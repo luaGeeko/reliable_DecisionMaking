@@ -191,7 +191,7 @@ def generate_dummy_data():
         number_of_time_bins = trials_in_session.shape[2]
         print('Make dummy data for this session: session #' + str(session_id))
         simulated_firing, neuron_types_added = make_dummy_data_for_session(simulated_data[session_id], number_of_neurons, number_of_trials, number_of_time_bins)
-        noise = np.random.normal(0, .01, simulated_firing.shape)
+        noise = np.random.normal(0, .001, simulated_firing.shape)
         simulated_firing += noise
         simulated_data[session_id]['spks'] = simulated_firing  # overwrite real data with simulated data
         simulated_data[session_id]['dummy_type'] = neuron_types_added
