@@ -107,25 +107,16 @@ def get_accuracy_predicting_right_vs_no_go(dummy_session, dummy_neuron):
 
 
 def guess_type(left_vs_right_accuracy, accuracy_left_vs_nogo, accuracy_right_vs_nogo):
-    neuron_type = ''
-    is_left = False
-    is_right = False
-    is_choice = False
-
     if left_vs_right_accuracy > 0.8:
-        is_choice = True
-        print('I think this is a choice neuron.')
-        neuron_type = 'choice'
+        if accuracy_left_vs_nogo > accuracy_right_vs_nogo:
+            neuron_type = 'left_choice'
+            print('left')
+        else:
+            neuron_type = 'right_choice'
+            print('right')
     else:
         neuron_type = 'not_choice'
-    if accuracy_left_vs_nogo > 0.65:
-        is_left = True
-        print('Left choice.')
-        neuron_type = 'left_choice'
-    if accuracy_right_vs_nogo > 0.65:
-        is_right = True
-        print('Right choice.')
-        neuron_type = 'right_choice'
+        print('not choice')
 
     if accuracy_left_vs_nogo > 0.65 and accuracy_right_vs_nogo > 0.65:
         neuron_type = 'action'
@@ -153,13 +144,16 @@ def compare_predicted_to_ground_truth_type(ground_truth, predicted):
     for index, neuron_type in enumerate(ground_truth):
         if neuron_type == predicted[index]:
             correct_guesses += 1
-        elif predicted[index] == 'action':
+        elif predicted[index] == 'not_choice':
+            if neuron_type == 'random':
+                correct_guesses += 1
             if neuron_type == 'peak_at_response':
                 correct_guesses += 1
             if neuron_type == 'ramp_to_action':
                 correct_guesses += 1
-        elif predicted[index] == 'not_choice':
-            if neuron_type == 'random':
+            if neuron_type == 'left_contrast_higher':
+                correct_guesses += 1
+            if neuron_type == 'right_contrast_higher':
                 correct_guesses += 1
 
     prediction_accuracy = correct_guesses / len(ground_truth)
