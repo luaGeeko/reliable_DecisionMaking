@@ -69,6 +69,48 @@ def make_left_choice_neuron(trial_features, number_of_time_bins):
     return firings_on_trial
 
 
+def make_left_contrast_higher_neuron(trial_features, number_of_time_bins):
+    number_of_trials = trial_features.shape[1]
+    earliest_response = trial_features[-1].min() * 100
+    # setting a reasonable range for peak
+    forward_time_shift_relative_to_response = np.random.uniform(2, earliest_response - 5)
+    sigma = np.random.uniform(0, number_of_time_bins / 4)
+    if trial_features[3][0] == 1:  # stimulus was higher left contrast
+        mu = trial_features[-1][0] * 100 - forward_time_shift_relative_to_response
+        firings_on_trial = math_utility.my_gaussian(np.arange(number_of_time_bins), mu, sigma)
+    else:
+        firings_on_trial = np.zeros(number_of_time_bins)
+    for trial in range(number_of_trials - 1):
+        if trial_features[3][trial + 1] == 1: # stimulus was higher left contrast
+            mu = trial_features[-1][trial + 1] * 100 - forward_time_shift_relative_to_response
+            next_firings = math_utility.my_gaussian(np.arange(number_of_time_bins), mu, sigma)
+        else:
+            next_firings = np.zeros(number_of_time_bins)
+        firings_on_trial = np.vstack((firings_on_trial, next_firings))
+    return firings_on_trial
+
+
+def make_right_contrast_higher_neuron(trial_features, number_of_time_bins):
+    number_of_trials = trial_features.shape[1]
+    earliest_response = trial_features[-1].min() * 100
+    # setting a reasonable range for peak
+    forward_time_shift_relative_to_response = np.random.uniform(2, earliest_response - 5)
+    sigma = np.random.uniform(0, number_of_time_bins / 4)
+    if trial_features[4][0] == 1:  # stimulus was higher right contrast
+        mu = trial_features[-1][0] * 100 - forward_time_shift_relative_to_response
+        firings_on_trial = math_utility.my_gaussian(np.arange(number_of_time_bins), mu, sigma)
+    else:
+        firings_on_trial = np.zeros(number_of_time_bins)
+    for trial in range(number_of_trials - 1):
+        if trial_features[4][trial + 1] == 1:  # stimulus was higher right contrast
+            mu = trial_features[-1][trial + 1] * 100 - forward_time_shift_relative_to_response
+            next_firings = math_utility.my_gaussian(np.arange(number_of_time_bins), mu, sigma)
+        else:
+            next_firings = np.zeros(number_of_time_bins)
+        firings_on_trial = np.vstack((firings_on_trial, next_firings))
+    return firings_on_trial
+
+
 # peak activity is relative to the response time but not behaviour
 def make_response_neuron(trial_features, number_of_time_bins):
     number_of_trials = trial_features.shape[1]
@@ -127,6 +169,16 @@ def get_dummy_data_for_neuron_type(trial_features, number_of_neurons, neuron_typ
             ramp_neuron = make_ramp_neuron(trial_features, number_of_time_bins)
             firings[neuron, :, :] = ramp_neuron
 
+    if neuron_type == 'left_contrast_higher':
+        for neuron in range(number_of_neurons):
+            left_contrast = make_left_contrast_higher_neuron(trial_features, number_of_time_bins)
+            firings[neuron, :, :] = left_contrast
+
+    if neuron_type == 'right_contrast_higher':
+        for neuron in range(number_of_neurons):
+            right_contrast = make_right_contrast_higher_neuron(trial_features, number_of_time_bins)
+            firings[neuron, :, :] = right_contrast
+
     return firings
 
 
@@ -136,14 +188,18 @@ def get_trial_feature_matrix(simulated_data):
     right_mask = responses == -1
     left_mask = responses == 1
     no_go_mask = responses == 0
+    left_contrast_higher = simulated_data['contrast_right'] < simulated_data['contrast_left']
+    right_contrast_higher = simulated_data['contrast_right'] > simulated_data['contrast_left']
 
     number_of_trials = simulated_data['spks'].shape[1]
     # features are response_left, response_right, no_response
-    trial_features = np.zeros((4, number_of_trials))
+    trial_features = np.zeros((6, number_of_trials))
     trial_features[0] = right_mask
     trial_features[1] = left_mask
     trial_features[2] = no_go_mask
-    trial_features[3] = response_times.flatten()
+    trial_features[3] = left_contrast_higher
+    trial_features[4] = left_contrast_higher
+    trial_features[5] = response_times.flatten()
     return trial_features
 
 
@@ -151,9 +207,9 @@ def make_dummy_data_for_session(simulated_data, number_of_neurons, number_of_tri
     simulated_firing = np.zeros((number_of_neurons, number_of_trials, number_of_time_bins))
     neuron_types_added = []
     trial_feature_matrix = get_trial_feature_matrix(simulated_data)  # columns: left, right, no go, response_times
-    types = ['right_choice', 'left_choice', 'peak_at_response', 'random', 'ramp_to_action']
+    types = ['right_choice', 'left_choice', 'peak_at_response', 'random', 'ramp_to_action', 'left_contrast_higher', 'right_contrast_higher']
     print('Neuron types generated: ' + str(types))
-    type_probabilities = [0.04, 0.06, 0.4, 0.3, 0.2]
+    type_probabilities = [0.04, 0.06, 0.2, 0.3, 0.2, 0.1, 0.1]
     print('With occurance probabilities: ' + str(type_probabilities))
     neuron_counter = 0
     already_added = 0
