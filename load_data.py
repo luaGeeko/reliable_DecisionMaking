@@ -1,13 +1,13 @@
 import numpy as np
+import coloredlogs, logging 
+import os
 
+dirname = os.path.dirname(__file__)
 
-# the data is stored in three files. this is a list of all the file names
-def make_list_of_filenames():
-    file_names = []
-    for j in range(3):
-        file_names.append('steinmetz_part%d.npz' % (j + 1))
-    return file_names
-
+# debugging
+logger = logging.getLogger("load_data")
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+coloredlogs.install(level='INFO', logger=logger)
 
 def load_mouse_data():
     """
@@ -43,13 +43,13 @@ def load_mouse_data():
     dat['%X%_passive']: same as above for X = {spks, lfp, pupil, wheel, contrast_left, contrast_right} but for passive
     trials at the end of the recording when the mouse was no longer engaged and stopped making responses.
     """
-
-    file_names = make_list_of_filenames()  # get list of file names
+    dataset_folder_path = os.path.join(dirname, "dataset")
+    # list of the dataset files in the dataset folder 
+    files = os.listdir(dataset_folder_path)
+    # get absolute path of dataset files 
+    file_paths = [os.path.join(dataset_folder_path, i) for i in files]
     all_data = np.array([])
-    for file_name in file_names:
-        all_data = np.hstack((all_data, np.load(file_name, allow_pickle=True)['dat']))
+    for file_id in file_paths:
+        all_data = np.hstack((all_data, np.load(file_id, allow_pickle=True)['dat']))
+    logging.info("Dataset loaded successfully - {} sessions".format(all_data.shape[0]))
     return all_data
-
-
-if __name__ == '__main__':
-    mouse_data = load_mouse_data()
