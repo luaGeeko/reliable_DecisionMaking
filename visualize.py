@@ -59,9 +59,9 @@ def plot_example_from_each_neuron_type(data, file_name='type_examples'):
         data_from_left_trial_filtered = math_utility.moving_average(data_from_left_trial, window=20)
 
         plt.figure()
-        plt.xlabel('Time (10 ms bins)', fontsize=16)
-        plt.ylabel('Firing rate', fontsize=16)
-        plt.title('Activity of "' + dummy_type + '" neuron', fontsize=16)
+        plt.xlabel('Time (10 ms bins)', fontsize=20)
+        plt.ylabel('Firing rate', fontsize=20)
+        plt.title('Activity of "' + dummy_type + '" neuron', fontsize=20)
         plt.plot(data_from_left_trial, color='black', linewidth=1, alpha=0.7, label='Left choice')
         plt.plot(data_from_right_trial, color='red', linewidth=1, alpha=0.7, label='Right choice')
         plt.plot(data_from_right_trial_filtered, color='red', linewidth=5)
@@ -69,6 +69,34 @@ def plot_example_from_each_neuron_type(data, file_name='type_examples'):
         plt.legend(loc="upper right", frameon=False)
 
         plt.savefig(dirname + '/figures/' + file_name + '_' + dummy_type + '.png')
+        plt.close()
+
+
+def plot_example_from_each_neuron_type_contrast(data, file_name='type_examples'):
+    types = np.unique(data['dummy_type'])
+    for dummy_type in types:
+        type_boolean_mask = pd.Series(data['dummy_type']) == dummy_type
+        index_example_neuron = np.where(type_boolean_mask == True)[0][0]
+        right_contrast_higher = data['contrast_right'] > data['contrast_left']
+        example_right_trial = np.where(right_contrast_higher == True)[0][0]
+        left_contrast_higher = data['contrast_right'] < data['contrast_left']
+        example_left_trial = np.where(left_contrast_higher == True)[0][0]
+        data_from_right_trial = data['spks'][index_example_neuron, example_right_trial, :]
+        data_from_right_trial_filtered = math_utility.moving_average(data_from_right_trial, window=20)
+        data_from_left_trial = data['spks'][index_example_neuron, example_left_trial, :]
+        data_from_left_trial_filtered = math_utility.moving_average(data_from_left_trial, window=20)
+
+        plt.figure()
+        plt.xlabel('Time (10 ms bins)', fontsize=20)
+        plt.ylabel('Firing rate', fontsize=20)
+        plt.title('Activity of "' + dummy_type + '" neuron', fontsize=20)
+        plt.plot(data_from_left_trial, color='black', linewidth=1, alpha=0.7, label='Left contrast higher')
+        plt.plot(data_from_right_trial, color='red', linewidth=1, alpha=0.7, label='Right contrast higher')
+        plt.plot(data_from_right_trial_filtered, color='red', linewidth=5)
+        plt.plot(data_from_left_trial_filtered, color='black', linewidth=5)
+        plt.legend(loc="upper right", frameon=False)
+
+        plt.savefig(dirname + '/figures/' + file_name + '_contrast_' + dummy_type + '.png')
         plt.close()
 
 
