@@ -179,9 +179,11 @@ def dimensionality_reduction(data, variance_thresh):
     Returns:
         data (class), the input data with an additional column
     """
-
+    # plt.figure()
     # loop through sessions
     for session_id in range(len(data)):
+
+
         spike_data = data[session_id]['spks']
         print("Session", session_id)
 
@@ -193,6 +195,8 @@ def dimensionality_reduction(data, variance_thresh):
         variance_explained = get_variance_explained(evals)
 
         # make plots
+        # ax1 = plt.subplot(5, 8, session_id+1)
+        # ax1.plot(np.arange(1, len(variance_explained) + 1), variance_explained, '--k')
         # plot_eigenvalues(evals, limit=True)
         # plot_variance_explained(variance_explained)
 
@@ -203,17 +207,17 @@ def dimensionality_reduction(data, variance_thresh):
         # add new column to data with newly reconstructed data
         data[session_id]['reconstructed_data'] = X_reconstructed
 
+    # plt.show()
     return data
 
 
 def main():
     all_data = load_data.load_mouse_data()
     print("Data loaded")
-    test_data = split_test_and_training_data.get_test_data(all_data)
-    training_data = split_test_and_training_data.get_training_data(all_data)
-    training_data = dimensionality_reduction(training_data, 0.9)
-    print(training_data)
-
+    # test_data = split_test_and_training_data.get_test_data(all_data)
+    # training_data = split_test_and_training_data.get_training_data(all_data)
+    train_data, test_data = split_test_and_training_data.train_test_split(train_size=0.8)
+    train_data = dimensionality_reduction(train_data, 0.9)
 
 if __name__ == '__main__':
     main()
