@@ -145,6 +145,14 @@ def main():
     dummy_session = get_data_from_a_dummy_sesion()
     dummy_session = get_session_choice_neurons(dummy_session)  # add column with identity of choice neurons
 
+    right_mask = dummy_session['dummy_type'] == 'right_choice'
+    left_mask = dummy_session['dummy_type'] == 'left_choice'
+    right_choice = dummy_session['is_right_choice_neuron']
+
+    proportion_of_correctly_guessed_right = np.sum(right_choice[right_mask]) / right_mask.sum()
+
 
 if __name__ == '__main__':
     main()
+
+
