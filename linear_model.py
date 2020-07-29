@@ -26,7 +26,7 @@ logger.info("Class cateogries: {}".format(classes_to_idx))
 def prepare_labels_in_correct_format(neuron_data_labels):
     # the labels for trials is [1, 0, -1], for classifying -1 is no sense, we can approach this in categorical way like multiclass classification
     # correcting the label for right choice neuron from -1 to label created above in classes_to_idx
-    neuron_data_labels[neuron_data_labels == -1] = classes_to_idx['left_choice_neuron']
+    neuron_data_labels[neuron_data_labels == -1] = classes_to_idx['right_choice_neuron']
     return neuron_data_labels
 
 #NOTE should we check accross all sessions or neurons in each session. also minor imbalance trials is kinda ok for now but big proportion should not be there
