@@ -100,15 +100,9 @@ def get_session_choice_neurons(dat):  # dat us one session isTrainingTrial is 0s
         # print(np.shape(featuresPerBin))
         # print(np.shape(neuronSpikesPerBin))
         featuresWeightsPerUnit[iUnit, :] = fit_lnp(featuresPerBin, neuronSpikesPerBin)
-        if (iUnit+1) % 50 == 0:
-             print(".")
-        else:
-             print(".", end = '')
 
-
-
-    side1Weights = np.abs(featuresWeightsPerUnit[:,1:1+nResponseShiftBins]);
-    side2Weights = np.abs(featuresWeightsPerUnit[:,1+nResponseShiftBins:1+2*nResponseShiftBins]);
+    side1Weights = np.abs(featuresWeightsPerUnit[:, 1: 1 + nResponseShiftBins])
+    side2Weights = np.abs(featuresWeightsPerUnit[:, 1 + nResponseShiftBins:1 + 2 * nResponseShiftBins])
     #print(np.shape(side2Weights))
 
     sideModulationIndex = side1Weights - side2Weights
