@@ -19,13 +19,17 @@ def main():
     # do dimensionality reduction on real and dummy data
     # reduced_dim_training_dummy = pre_process_data.dimensionality_reduction(train_data, 0.9)
     # reduced_dim_training = pre_process_data.dimensionality_reduction(train_data, 0.9)
-    # evaluate model #2 on dummy data
+    # reduced_dim_test_dummy = pre_process_data.dimensionality_reduction(test_data, 0.9)
+    # reduced_dim_test = pre_process_data.dimensionality_reduction(test_data, 0.9)
+    # evaluate model on dummy data
+    # the model should take the training and test data sets as an input and return them with the new columns added
     ### this is the GLM, it should add the extra columns the descriptive stats needs
 
     # evaluate model #1 on observed data
     # evaluate model #2 on observed data
 
     # plot results for all
+    # input should be the data / dummy data with the result columns
     # descriptive_stats.descriptive_stats.do_descriptive_stats()
 
 
