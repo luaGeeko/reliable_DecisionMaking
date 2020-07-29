@@ -66,16 +66,16 @@ def get_spike_count(neuron_trials_data):
         spike_count = np.count_nonzero(trial)
         spikes_count_all_trials.append(spike_count)
 
-def show_metrics(model, spike_data, ground_truth, predictions):
+def show_metrics(model, spike_data, ground_truth, predictions, title: str = None):
     classify_report = classification_report(ground_truth, predictions)
     print ("\n==============================\n")
     print (classify_report)
     print ("\n==============================\n")
     disp = plot_confusion_matrix(model, spike_data, ground_truth, normalize='true')
-    disp.ax_.set_title("normalized confusion matrix")
-    plt.show()
+    disp.ax_.set_title("normalized confusion matrix: " + title)
+    plt.show()z
 
-def logistic_model(train_spikes, train_choices):
+def logistic_model(train_spikes, train_choices, title: str = None):
     """
     train_choices: ground truth - two possible behavioural outcomes (could be left vs right or right vs no go etc)
     train_spikes: spikes on trials for individual neuron for training 
@@ -89,7 +89,6 @@ def logistic_model(train_spikes, train_choices):
     print ("model classes", model.classes_)
     print ("model slope", model.coef_.shape)
     print ("model intercept", model.intercept_)
-    print (train_spikes[1], train_spikes[1].mean(), train_spikes[1].shape)
     #fig = plt.figure()
     #ax1 = fig.add_subplot(111)
     #x_min, x_max = ax1.get_xlim()
@@ -97,6 +96,7 @@ def logistic_model(train_spikes, train_choices):
     #plt.show()
     cross_val_accuracy_scores = cross_val_score(model, train_spikes, train_choices, cv=4)  # k=4 cross-validation
     cross_val_mean, cross_val_std = cross_val_accuracy_scores.mean(), cross_val_accuracy_scores.std()
+    show_metrics(model, train_spikes, train_choices, predictions, title=title)
     return cross_val_mean, cross_val_std
 
 
@@ -131,7 +131,7 @@ def get_accuracy_predicting_left_vs_right(dummy_session, dummy_train_neuron):
     right_and_left_trials_indices = np.append(right_trials_indices, left_trials_indices)
     included_trials_of_dummy_neuron = dummy_train_neuron[right_and_left_trials_indices, :]  # only left and right trials
     included_decisions = dummy_session['response'][right_and_left_trials_indices]  # list of left and right trials
-    mean_accuracy_left_vs_right, std_left_vs_right = logistic_model(included_trials_of_dummy_neuron, included_decisions)
+    mean_accuracy_left_vs_right, std_left_vs_right = logistic_model(included_trials_of_dummy_neuron, included_decisions, 'left_vs_right')
     return mean_accuracy_left_vs_right, std_left_vs_right
 
 
@@ -141,7 +141,7 @@ def get_accuracy_predicting_left_vs_no_go(dummy_session, dummy_neuron):
     left_and_nogo_trials_indices = np.append(no_go_trials_indices, left_trials_indices)
     included_trials_of_dummy_neuron = dummy_neuron[left_and_nogo_trials_indices, :]  # only left and right trials
     included_decisions = dummy_session['response'][left_and_nogo_trials_indices]  # list of left and right trials
-    mean_accuracy_left_vs_nogo, std_left_vs_nogo = logistic_model(included_trials_of_dummy_neuron, included_decisions)
+    mean_accuracy_left_vs_nogo, std_left_vs_nogo = logistic_model(included_trials_of_dummy_neuron, included_decisions, 'left_vs_nogo')
     return mean_accuracy_left_vs_nogo, std_left_vs_nogo
 
 
@@ -151,7 +151,7 @@ def get_accuracy_predicting_right_vs_no_go(dummy_session, dummy_neuron):
     right_and_nogo_trials_indices = np.append(no_go_trials_indices, right_trials_indices)
     included_trials_of_dummy_neuron = dummy_neuron[right_and_nogo_trials_indices, :]  # only left and right trials
     included_decisions = dummy_session['response'][right_and_nogo_trials_indices]  # list of left and right trials
-    mean_accuracy_right_vs_nogo, std_right_vs_nogo = logistic_model(included_trials_of_dummy_neuron, included_decisions)
+    mean_accuracy_right_vs_nogo, std_right_vs_nogo = logistic_model(included_trials_of_dummy_neuron, included_decisions, 'right_vs_nogo')
     return mean_accuracy_right_vs_nogo, std_right_vs_nogo
 
 def guess_type(left_vs_right_accuracy, accuracy_left_vs_nogo, accuracy_right_vs_nogo):
