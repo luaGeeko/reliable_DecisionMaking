@@ -3,7 +3,6 @@ import numpy as np
 import os
 import split_test_and_training_data
 
-
 dirname = os.path.dirname(__file__)
 
 
@@ -70,7 +69,8 @@ def get_proportion_of_correct_predictions(train_data, type_neuron):
             if is_right == 1:  # this is right choice neuron
                 proportion_of_good_predictions = get_proportion_of_correct_predictions_for_neuron(train_data, session, type_neuron, neuron_index)
                 good_predictions_all_sessions.extend([proportion_of_good_predictions])
-    plot_proportions_of_correct_predictions(good_predictions_all_sessions, 'proportion_of_good_predictions_' + type_neuron)
+    plot_proportions_of_correct_predictions(good_predictions_all_sessions,
+                                            'proportion_of_good_predictions_' + type_neuron)
 
 
 def count_choice_neurons_per_region(train_data, type_neuron):
@@ -87,17 +87,49 @@ def count_choice_neurons_per_region(train_data, type_neuron):
 
 def get_proportion_of_correct_predictions_per_region(train_data, type_neuron):
     proportion_of_good_predictions_neuron = []  # number of choice neurons length
-    brain_areas = []  # number of choice neurons length
-    for session in range(len(train_data)):
-        pass
-        # get choice neurons in session
-        # get brain regions
-        for neuron_index in session:  # (incorrect pseudocode)
-            proportion_of_good_predictions = get_proportion_of_correct_predictions_for_neuron(train_data, session, type_neuron, neuron_index)
-            # make a list of these
+    brain_areas_for_each_choice = []  # number of choice neurons length
 
-    # aggregate good prediction proportions by brain area - average / std proportion of good predictions per area
-    # plot aggregated data
+    for session in range(len(train_data)):
+        brain_areas = train_data[session]['brain_area']
+        neuron_type = 'is_' + type_neuron + '_choice_neuron'
+        is_neuron_type = train_data[session][neuron_type] == 1
+        brain_regions_choice = brain_areas[is_neuron_type]
+        for neuron_index, is_right in enumerate(is_neuron_type):
+            if is_right == 1:  # this is right choice neuron
+                proportion_of_good_predictions = get_proportion_of_correct_predictions_for_neuron(train_data, session, type_neuron, neuron_index)
+
+                # this_brain_area = np.where(list_brain_areas == brain_areas[neuron_index])
+
+                proportion_of_good_predictions_neuron.extend([proportion_of_good_predictions])
+
+        brain_areas_for_each_choice.extend(brain_regions_choice)
+    # convert to numpy arrays
+    proportion_of_good_predictions_neuron = np.array(proportion_of_good_predictions_neuron)
+    brain_areas_for_each_choice = np.array(brain_areas_for_each_choice)
+    plot_proportion_of_correct_predictions_per_region(proportion_of_good_predictions_neuron, brain_areas_for_each_choice, 'proportion_correct_predictions_per_area')
+
+    return
+
+
+def plot_proportion_of_correct_predictions_per_region(proportion_of_good_predictions_neuron,
+                                                      brain_areas_for_each_choice, file_name):
+
+    proportion_of_good_predictions_per_area = []
+    brain_areas = np.unique(brain_areas_for_each_choice)
+    for area in brain_areas:
+        idx_this_area = np.where(brain_areas_for_each_choice == area)
+        this_area_proportion_mean = np.mean(proportion_of_good_predictions_neuron[idx_this_area])
+        proportion_of_good_predictions_per_area.append(this_area_proportion_mean)
+
+    plt.figure()
+    plt.bar(brain_areas, proportion_of_good_predictions_per_area)
+    plt.ylabel('Proportion of correct choices')
+    plt.xticks(rotation=45)
+    plt.tight_layout()
+    plt.savefig(dirname + '/figures/' + file_name + '.png')
+    plt.close()
+
+    return
 
 
 def plot_number_of_right_choice_neurons_per_region(right_choice_neurons_areas, file_name):
@@ -125,10 +157,7 @@ def do_descriptive_stats(dummy_choice=False, dummy_prediction=False):
     get_proportion_of_correct_predictions(train_data, 'left')
     get_proportion_of_correct_predictions_per_region(train_data, 'right')
 
-
-
     # todo: the next thing could be to plot the avg proportion of correct guesses by brain region
-
 
     # Look at if motor regions have choice neurons (falls into error correction hypothesis)
     # Pull out which choice neurons encode left v right turn
