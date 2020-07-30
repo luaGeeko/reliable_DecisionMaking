@@ -1,5 +1,5 @@
 import numpy as np
-import matplotlib.pyplot as plt
+#import matplotlib.pyplot as plt
 import os
 from load_data import load_mouse_data
 #import coloredlogs, logging
@@ -53,8 +53,7 @@ def check_class_proportion(data, across_sessions: bool = False, single_neuron: b
         assert len(spike_session_data.shape) == 3, "the shape for neurons x trials x timebins is needed but found " + str(spike_session_data.shape)
         right_trials_indices, left_trials_indices, no_go_trials_indices = get_indices_for_trial_types(session_data)
         value_count = [no_go_trials_indices.shape[0], right_trials_indices.shape[0], left_trials_indices.shape[0]]
-        plt.bar(classes, value_count, alpha=0.7)
-        plt.show()
+
 
     elif single_neuron:
         pass
@@ -92,15 +91,12 @@ def logistic_model_V2(train_spikes, train_choices, title: str = None):
     probabilities_1 = predict_probs[:, 0]
     probabilities_2 = predict_probs[:, 1]
     mean_probs_right, mean_probs_left = predict_probs[:, 0].mean(), predict_probs[:, 1].mean()
-    print ("train score {}".format(model_train_score))
-    print ("model classes", model.classes_)
-    print ("model slope", model.coef_.shape)
-    print ("model intercept", model.intercept_)
-    fig = plt.figure()
-    ax1 = fig.add_subplot(111)
-    x_min, x_max = ax1.get_xlim()
+    #print ("train score {}".format(model_train_score))
+    #print ("model classes", model.classes_)
+    #print ("model slope", model.coef_.shape)
+    #print ("model intercept", model.intercept_)
+
     #ax1.plot([0, x_max], [model.intercept_[0], x_max*model.coef_.reshape(-1).mean()+model.intercept_[0]])
-    #plt.show()
     # model evaulation accuracies with differeent splits
     #show_metrics(model, train_spikes, train_choices, predictions, title=title)
     return probabilities_1, probabilities_2
@@ -207,16 +203,16 @@ def guess_type(left_vs_right_accuracy, accuracy_left_vs_nogo, accuracy_right_vs_
     if left_vs_right_accuracy > 0.85:
         if accuracy_left_vs_nogo > accuracy_right_vs_nogo:
             neuron_type = 'left_choice'
-            print('left')
+            #print('left')
         elif 0.50 < accuracy_right_vs_nogo <= 0.60 and 0.50 < accuracy_left_vs_nogo <= 0.60:
             neuron_type = 'action'
-            print ("can not differentiate between left or right")
+            #print ("can not differentiate between left or right")
         else:
             neuron_type = 'right_choice'
-            print('right')
+            #print('right')
     else:
         neuron_type = 'not_choice'
-        print('not choice')
+        #print('not choice')
 
     return neuron_type
 
@@ -308,13 +304,13 @@ def compare_predicted_to_ground_truth_type(ground_truth, predicted):
                 correct_guesses += 1
 
     prediction_accuracy = correct_guesses / len(ground_truth)
-    print('prediction accuracy is:' + str(np.round(prediction_accuracy, 2)))
-    print('model guessed choice but not side: ' + str(np.round(number_of_times_it_guessed_choice)))
+    #print('prediction accuracy is:' + str(np.round(prediction_accuracy, 2)))
+    #print('model guessed choice but not side: ' + str(np.round(number_of_times_it_guessed_choice)))
 
 
 def run_model_on_real_data_session(session_data):
     # session_data = get_data_from_a_dummy_sesion(session_id)
-    print('Analyze all neurons from this session and check accuracy of predictions:')
+    #print('Analyze all neurons from this session and check accuracy of predictions:')
     number_of_neurons = session_data['spks'].shape[0]
     number_of_trials = session_data['spks'].shape[1]
     neuron_type_guesses = []
@@ -325,11 +321,11 @@ def run_model_on_real_data_session(session_data):
         left_vs_right_accuracy, accuracy_left_vs_nogo, accuracy_right_vs_nogo, predictions_trials = compare_prediction_accuracies_for_neuron(session_data, neuron_index)
         predictions[neuron_index, :] = predictions_trials
         neuron_type = guess_type(left_vs_right_accuracy, accuracy_left_vs_nogo, accuracy_right_vs_nogo)
-        print("neuron_idx: {} neuron type {}".format(neuron_index, neuron_type))
-        if neuron_type == 'left':
+        #print("neuron_idx: {} neuron type {}".format(neuron_index, neuron_type))
+        if neuron_type == 'left_choice':
             is_right_choice_neuron.extend([0])
             is_left_choice_neuron.extend([1])
-        elif neuron_type == 'right':
+        elif neuron_type == 'right_choice':
             is_right_choice_neuron.extend([1])
             is_left_choice_neuron.extend([0])
         else:
@@ -351,7 +347,7 @@ def main():
     data = load_mouse_data()
     for session in range(len(data)):
         data[session] = run_model_on_real_data_session(data[session])
-        print('')
+
 
 
 if __name__ == '__main__':
