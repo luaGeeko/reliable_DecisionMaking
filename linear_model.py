@@ -312,7 +312,7 @@ def compare_predicted_to_ground_truth_type(ground_truth, predicted):
     print('model guessed choice but not side: ' + str(np.round(number_of_times_it_guessed_choice)))
 
 
-def run_model_on_real_data_session(session_data, session_id):
+def run_model_on_real_data_session(session_data):
     # session_data = get_data_from_a_dummy_sesion(session_id)
     print('Analyze all neurons from this session and check accuracy of predictions:')
     number_of_neurons = session_data['spks'].shape[0]
@@ -350,7 +350,7 @@ def run_model_on_real_data_session(session_data, session_id):
 def main():
     data = load_mouse_data()
     for session in range(len(data)):
-        data[session] = run_model_on_real_data_session(data[session], session)
+        data[session] = run_model_on_real_data_session(data[session])
         print('')
 
 

@@ -1,6 +1,8 @@
 import matplotlib.pylab as plt
 import numpy as np
 import os
+import load_data
+import linear_model
 import split_test_and_training_data
 
 dirname = os.path.dirname(__file__)
@@ -146,33 +148,21 @@ def plot_number_of_right_choice_neurons_per_region(right_choice_neurons_areas, f
 
 def do_descriptive_stats(dummy_choice=False, dummy_prediction=False):
     # load the training data
-    train_data, test_data = split_test_and_training_data.train_test_split(train_size=0.8)
+    all_data = load_data.load_mouse_data()
 
-    for session in range(len(train_data)):
-        train_data[session] = check_if_dummy_choices_are_needed_and_add_them(dummy_choice, dummy_prediction, train_data[session])
+    for session in range(len(all_data)):
+        all_data[session] = linear_model.run_model_on_real_data_session(all_data[session])
+        all_data[session] = check_if_dummy_choices_are_needed_and_add_them(dummy_choice, dummy_prediction, all_data[session])
 
     # Plot brain region vs number of choice neuron in each brain region (bar chart)
-    count_choice_neurons_per_region(train_data, 'right')
-    get_proportion_of_correct_predictions(train_data, 'right')
-    get_proportion_of_correct_predictions(train_data, 'left')
-    get_proportion_of_correct_predictions_per_region(train_data, 'right')
-
-    # todo: the next thing could be to plot the avg proportion of correct guesses by brain region
-
-    # Look at if motor regions have choice neurons (falls into error correction hypothesis)
-    # Pull out which choice neurons encode left v right turn
-    # Whether choice neuron predicted the correct turn prediction (compare the identity of choice neuron with the correct
-    # wheel movement/ percentage of correct predictions)
-
-    # Whether the mouse executed the same prediction as the choice neuron i.e. left turn choice neuron and then left
-    # turn wheel movement
-    # proportion of mismatch trials per neuron - done for right choice neurons
-
-    pass
+    count_choice_neurons_per_region(all_data, 'right')
+    get_proportion_of_correct_predictions(all_data, 'right')
+    get_proportion_of_correct_predictions(all_data, 'left')
+    get_proportion_of_correct_predictions_per_region(all_data, 'right')
 
 
 def main():
-    do_descriptive_stats(dummy_choice=True, dummy_prediction=True)
+    do_descriptive_stats(dummy_choice=False, dummy_prediction=False)
 
 
 if __name__ == '__main__':
