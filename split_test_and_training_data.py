@@ -86,3 +86,4 @@ def train_test_split(train_size: float = 0.8):
     train_data = get_training_data(data, split_trial_indices)
     test_data = get_test_data(data, split_trial_indices)
     return train_data, test_data
+

@@ -8,11 +8,19 @@ Dataset link https://osf.io/agvxh . The dataset has three parts on the site. It 
 
 To help with laoding of dataset and initial analysis overview this colab notebook can be referred to https://colab.research.google.com/github/NeuromatchAcademy/course-content/blob/master/projects/load_steinmetz_decisions.ipynb copy of which is available in repo.
 
-#### Instructions to load data
+#### prerequisite
+1. Before running modules please run: ```pip -r requirements.txt```
+
+#### Initial step to test modules
+1. for unit test functions are under ```tests``` folder
+2. for running tests example : ```pytest tests/test_dataset_splits.py```
+
+#### Instructions to load data and description of modules 
 1. First download the data from the google drive and place it under the folder ```dataset ```
 2. ```load_data.py``` module will load the data with 40 sessions from 10 mice
 3. ```split_test_and_training_data.py``` module will split the data into training and test sets.
-  
+4. ```generate_synthetic_data.py``` module will simulate choice neurons and neurons that do not have activity that correlates with the choice. This will be used to test the GLM.
+5. ```utils.py``` module with helper functions to create simulated gaussion pdf and other timeit wrappers for testing 
  
 #### Some Helpful Git commands
 1. To create a new branch from the master ```git branch new-branch```

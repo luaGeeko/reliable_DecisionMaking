@@ -1,0 +1,2 @@
+coloredlogs==0.14.0
+pytest==5.4.3
