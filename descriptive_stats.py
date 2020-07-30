@@ -40,17 +40,17 @@ def plot_proportions_of_correct_predictions(proportions, file_name):
     proportions.sort()
     plt.figure()
     plt.plot(np.arange(len(proportions)), proportions)
-    plt.xlabel('Choice neuron id')
-    plt.ylabel('Proportion of correctly predicted trials')
-    plt.title('Correct predictions per neuron')
+    plt.xlabel('Choice neuron id', fontsize=16)
+    plt.ylabel('Proportion of correctly predicted trials', fontsize=16)
+    plt.title('Correct predictions per neuron', fontsize=16)
     plt.savefig(dirname + '/figures/' + file_name + '.png')
     plt.close()
 
     plt.figure()
     plt.hist(proportions)
-    plt.xlabel('Proportion of correctly predicted trials')
-    plt.ylabel('Number of neurons')
-    plt.title('Correct predictions per neuron')
+    plt.xlabel('Proportion of correctly predicted trials', fontsize=16)
+    plt.ylabel('Number of neurons', fontsize=16)
+    plt.title('Correct predictions per neuron', fontsize=16)
     plt.savefig(dirname + '/figures/' + file_name + '_hist.png')
     plt.close()
 
@@ -92,6 +92,7 @@ def get_proportion_of_correct_predictions_per_region(train_data, type_neuron):
     brain_areas_for_each_choice = []  # number of choice neurons length
 
     for session in range(len(train_data)):
+        print('starting session' + str(session))
         brain_areas = train_data[session]['brain_area']
         neuron_type = 'is_' + type_neuron + '_choice_neuron'
         is_neuron_type = train_data[session][neuron_type] == 1
@@ -146,10 +147,9 @@ def plot_number_of_right_choice_neurons_per_region(right_choice_neurons_areas, f
     plt.close()
 
 
-def do_descriptive_stats(dummy_choice=False, dummy_prediction=False):
+def do_descriptive_stats(all_data, dummy_choice=False, dummy_prediction=False):
     # load the training data
-    all_data = load_data.load_mouse_data()
-
+    all_data = [all_data[0]]
     for session in range(len(all_data)):
         all_data[session] = linear_model.run_model_on_real_data_session(all_data[session])
         all_data[session] = check_if_dummy_choices_are_needed_and_add_them(dummy_choice, dummy_prediction, all_data[session])
@@ -161,8 +161,23 @@ def do_descriptive_stats(dummy_choice=False, dummy_prediction=False):
     get_proportion_of_correct_predictions_per_region(all_data, 'right')
 
 
+def get_dummy():
+    dataset_folder_path = os.path.join(dirname, "dummy_data")
+    # list of the dataset files in the dataset folder
+    files = os.listdir(dataset_folder_path)  # get first few only
+    # get absolute path of dataset files
+    file_paths = [os.path.join(dataset_folder_path, i) for i in files]
+    all_data = np.array([])
+    for file_id in file_paths:
+        all_data = np.hstack((all_data, np.load(file_id, allow_pickle=True)))
+    return all_data
+
+
 def main():
-    do_descriptive_stats(dummy_choice=False, dummy_prediction=False)
+    # dummy = get_dummy()
+    # do_descriptive_stats(dummy, dummy_choice=False, dummy_prediction=False)
+    all_data = load_data.load_mouse_data()
+    do_descriptive_stats(all_data, dummy_choice=False, dummy_prediction=False)
 
 
 if __name__ == '__main__':
