@@ -48,6 +48,7 @@ def plot_proportions_of_correct_predictions(proportions, file_name):
 
     plt.figure()
     plt.hist(proportions)
+    plt.xlim(0, 1)
     plt.xlabel('Proportion of correctly predicted trials', fontsize=16)
     plt.ylabel('Number of neurons', fontsize=16)
     plt.title('Correct predictions per neuron', fontsize=16)
@@ -174,10 +175,10 @@ def get_dummy():
 
 
 def main():
-    # dummy = get_dummy()
-    # do_descriptive_stats(dummy, dummy_choice=False, dummy_prediction=False)
-    all_data = load_data.load_mouse_data()
-    do_descriptive_stats(all_data, dummy_choice=False, dummy_prediction=False)
+    dummy = get_dummy()
+    do_descriptive_stats(dummy, dummy_choice=False, dummy_prediction=False)
+    #all_data = load_data.load_mouse_data()
+    #do_descriptive_stats(all_data, dummy_choice=False, dummy_prediction=False)
 
 
 if __name__ == '__main__':
